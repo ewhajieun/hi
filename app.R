@@ -61,6 +61,7 @@ ui<-
     headerPanel("Asian option Application"),
     
      sidebarPanel(
+     "시장정보"
        radioButtons("radio",label=h3("Option"),choices=list("Asian Call"=1,"Asian Put"=2),selected=1),
        sliderInput("r","순간 무위험 이자율",min=0,max=1,step=0.01,value=0.5),
       numericInput("sigma","Volatility",0.27),
