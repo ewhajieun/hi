@@ -68,7 +68,7 @@ ui<-
       numericInput("s0","주식 현재 가격",235600),
       
       numericInput("k","옵션 행사 가격",235600),
-      numericInput("t","만기(year)",1),
+      numericInput("t","만기(year)",0.25),
       
       submitButton("View")
       
