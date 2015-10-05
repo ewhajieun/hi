@@ -8,7 +8,7 @@ myasian<-function(r,sigma,s0,radio,k,t){
   
   delta.t<-1/250
   T<-round(t/delta.t)
-  m<-1000
+  m<-10000
   c.t<-0
   p.t<-0
   sum.S<-0
