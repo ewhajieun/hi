@@ -1,19 +1,19 @@
 
 mypremium<-function(kilometres,zone,bonus,make,limit,deductable){
 
-  alpha1<-ifelse(kilometres==1,1,0)
-  alpha2<-ifelse(kilometres==2,1,0)
-  alpha3<-ifelse(kilometres==3,1,0)
-  alpha4<-ifelse(kilometres==4,1,0)
-  alpha5<-ifelse(kilometres==5,1,0)
+  alpha1<-ifelse(kilometres=="less than 1000",1,0)
+  alpha2<-ifelse(kilometres=="from 1000 to 15000",1,0)
+  alpha3<-ifelse(kilometres=="15000 to 20000",1,0)
+  alpha4<-ifelse(kilometres=="20000 to 25000",1,0)
+  alpha5<-ifelse(kilometres=="more than 25000",1,0)
   
-  beta1<-ifelse(zone==1,1,0)
-  beta2<-ifelse(zone==2,1,0)
-  beta3<-ifelse(zone==3,1,0)
-  beta4<-ifelse(zone==4,1,0)
-  beta5<-ifelse(zone==5,1,0)
-  beta6<-ifelse(zone==6,1,0)
-  beta4<-ifelse(zone==7,1,0)
+  beta1<-ifelse(zone=="Stockholm, Goteborg, Malmo with surroundings",1,0)
+  beta2<-ifelse(zone=="Other large cities with surroundings",1,0)
+  beta3<-ifelse(zone=="Smaller cities with surroundings in southern Sweden",1,0)
+  beta4<-ifelse(zone=="Rural areas in southern Sweden",1,0)
+  beta5<-ifelse(zone=="Smaller cities with surroundings in northern Sweden",1,0)
+  beta6<-ifelse(zone=="Rural areas in northern Sweden",1,0)
+  beta4<-ifelse(zone=="Gotland",1,0)
   
   r1<-ifelse(bonus==1,1,0)
   r2<-ifelse(bonus==2,1,0)
@@ -85,6 +85,7 @@ alpha1_1<-ifelse(kilometres==1,1,0)
   premium<-n.claim*size.claim1
   return(premium)
 }
+
 
 library(shiny)
 
