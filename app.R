@@ -139,9 +139,9 @@ ui<-
                           "VOLVO V60CC MILJODIESEL"),
                selected=1),
    numericInput("limit",
-               label="보상한도(limit)",value=0),
+               label="보상한도(limit)",value=10000),
    numericInput("deductable",
-               label="자기공제액(deductable)",value=10000),
+               label="자기공제액(deductable)",value=0),
    submitButton("View")
   ),
  mainPanel(
