@@ -128,7 +128,7 @@ ui<-
                selected=1),
    selectInput(inputId="make",
                label="자동차 종류",
-               choices=choices=c("VOLVO V60 N MILJODIESEL Diesel",
+               choices=c("VOLVO V60 N MILJODIESEL Diesel",
                           "VOLVO V40N CC MILJODIESE Diesel",
                           "VOLVO S60 II MILJODIESEL Diesel",
                           "VOLVO V40N MILJODIESEL Diesel",
