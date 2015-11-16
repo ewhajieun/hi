@@ -99,18 +99,8 @@ cox.ftn<-function(y.i,age,how.long,exp.prop,p.left.date){
   p.value2<-1-(surv.value1/surv.value2)^mu.hat
   return(p.value2)
 }
-#p.method<-1
-#age<-30
-#how.exp<-"월납"
-#during.exp<-10
-#live<-"Yes"
-#con.date<-"2001-01-01"
-#final.count<-10
-#goods.m<-"A"
-#due<-TRUE
-#premium<-100000
-myp.value(p.method,age,how.exp,during.exp,live,con.date,
-          final.count,goods.m,due)
+
+
 myp.value<-function(p.method,age,how.exp,during.exp,live,con.date,final.count,goods.m,due,premium){
   if(how.exp=="월납"){how.exp1<-1
   }else if(how.exp=="3월납"){how.exp1<-2
