@@ -28,7 +28,7 @@ no.due.glm.ftn<-function(live,y.i,current.age,exp.prop,how.long){ # 무만기
 not.due.gam<-function(y.i,current.age,exp.prop,how.long.gam,premium.once){ #만기 
   library(nlme)
   library(mgcv)
-  setwd("D://")
+  setwd("J://")
   
   notmu<-read.table("notmu1.csv",header=T,sep="")
   colnames(notmu)<-c("Target_Y","age","how.exp","during.exp","how.pay","premium","live","con.date","due.date",
@@ -45,7 +45,7 @@ not.due.gam<-function(y.i,current.age,exp.prop,how.long.gam,premium.once){ #만�
 due.gam<-function(during.exp,live1,goods.m1,y.i,current.age,exp.prop,how.long.gam,p.left.date){ # 무만기 
   library(nlme)
   library(mgcv)
-  setwd("D://")
+  setwd("J://")
   mu<-read.table("mu1.csv",header=T,sep="")
   colnames(mu)<-c("Target_Y","age","how.exp","during.exp","how.pay","premium","live","con.date","due.date",
                   "final.count","goods.m","goods.s","y.i","current.age","exp.prop","how.long","p.left.date","premium.once")
