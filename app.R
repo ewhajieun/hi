@@ -1,224 +1,357 @@
+glm.ftn<-function(sol.data,s2,s4,s9,s11,s12,d1,l1,l3,x1,g1,g2,p2,p4,p7,a1,a2,a3,x40,x43,x44,x41,x42,x49,x71,x74,x48,x51,x52){
+  
+  #sol.data<-sol.data2
+  glm.fit<-glm(delta~s2+s4+s9+sqrt(s11)+sqrt(s12)+d1+l1+l3+x1+g1+g2+sqrt(p2)+p4+p7+log(a1)+sqrt(a2)+a3+log(x40)+x43+log(x44)+
+                 as.factor(x41)+as.factor(x42)+x49+x71+x74+x48+x51+x52,family=binomial(probit),data=sol.data)
+  new.data<-data.frame(s2=s2,s4=s4,s9=s9,s11=s11,s12=s12,d1=d1,l1=l1,l3=l3,
+                       x1=x1,g1=g1,g2=g2,p2=p2,p4=p4,p7=p7,a1=a1,a2=a2,a3=a3,x40=x40,x43=x43,x44=x44,x41=as.factor(x41),
+                       x42=as.factor(x42),x49=x49,x71=x71,x74=x74,x48=x48,x51=x51,x52=x52)
+  glm.pred<-1/(1+exp(-predict(glm.fit,newdata=new.data)))
+  return(glm.pred)}
 
-due.glm.ftn<-function(during.exp,goods.m1,y.i,current.age,
-                      exp.prop,how.long,p.left.date){ # 만기 
-  beta<-c(14.33,-0.04391,0.0361,0.1295,-786.3,1.023,-0.01011,-15.9,-9.033,-1.035,-0.01164,
-          -0.0007603,9.792,-1.036,-0.001723,9.438)
-  goods.m2<-ifelse(goods.m1==2,1,0)
-  goods.m4<-ifelse(goods.m1==4,1,0)
-  goods.m5<-ifelse(goods.m1==5,1,0)
-  x.data<-c(1,during.exp,goods.m2,goods.m4,goods.m5,y.i,current.age,
-                exp.prop,how.long,p.left.date,goods.m2*y.i,goods.m4*y.i,
-                goods.m5*y.i,y.i*exp.prop,y.i*how.long,exp.prop*how.long)
-  #length(beta)
-  #length(x.data)
-  p.value<-pnorm(sum(beta*x.data),mean=0,sd=1)
-  return(p.value)
-}
-
-no.due.glm.ftn<-function(live,y.i,current.age,exp.prop,how.long){ # 무만기 
-  live1<-ifelse(live==1,1,0)
-  beta1<-c(7.15582,0.51521,0.13055,-0.02371,-7.13301,-1.51052)
-  x.data1<-c(1,live1,y.i,current.age,exp.prop,how.long)
-  #length(beta1)
-  #length(x.data1)
-  p.value1<-pnorm(sum(beta1*x.data1),mean=0,sd=1)
-  return(p.value1)
-}
-
-not.due.gam<-function(y.i,current.age,exp.prop,how.long.gam,premium.once){ #만기 
+gam.ftn<-function(sol.data2,a){
   library(nlme)
   library(mgcv)
-  setwd("J://")
   
-  notmu<-read.table("notmu1.csv",header=T,sep="")
-  colnames(notmu)<-c("Target_Y","age","how.exp","during.exp","how.pay","premium","live","con.date","due.date",
-                     "final.count","goods.m","goods.s","y.i","current.age","exp.prop","how.long","p.left.date","premium.once")
+  gam.ftn<-gam(delta~s2+s4+s9+sqrt(s11)+sqrt(s12)+d1+l1+l3+x1+g1+g2+sqrt(p2)+p4+p7+log(a1)+sqrt(a2)+a3+log(x40)+x43+log(x44)+
+                 as.factor(x41)+as.factor(x42)+x49+x71+x74+x48+x51+x52, family=binomial("logit"),data=sol.data2)
+  new.data<-data.frame(s2=s2,s4=s4,s9=s9,s11=s11,s12=s12,d1=d1,l1=l1,l3=l3,
+                       x1=x1,g1=g1,g2=g2,p2=p2,p4=p4,p7=p7,a1=a1,a2=a2,a3=a3,x40=x40,x43=x43,x44=x44,x41=as.factor(x41),
+                       x42=as.factor(x42),x49=x49,x71=x71,x74=x74,x48=x48,x51=x51,x52=x52)
+  gam.pred<-predict(gam.ftn,newdata=new.data,type = "response")
+  return(gam.pred)}
 
-  final.model2.2<-gam(Target_Y ~ y.i + current.age + s(exp.prop) + how.long +
-                        s(premium.once),family=binomial(probit),data=notmu)
-  notmumu<-data.frame(y.i=y.i,current.age=current.age,exp.prop=exp.prop,how.long=how.long.gam,premium.once=premium.once)
-  p<-predict(final.model2.2,newdata=notmumu,type = "response")
+
+p.fun<-function(model,newdata){
+  
+  surv1<-c()
+  surv2<-c()
+  p<-c()
+  newdata$y.i<-round(newdata$y.i)
+  surv.data<-survfit(model)$surv
+  time.data<-survfit(model)$time
+  fit.time<-seq(time.data[length(time.data)])
+  length(time.data)
+  surv.t<-c()
+  
+  for(i in 1:length(surv.data)){
+    if(i==1){
+      surv.t<-c(surv.t,rep(surv.data[i],time.data[i]))}else if(i==length(surv.data)){
+        surv.t<-c(surv.t,rep(surv.data[i],(length(fit.time)-length(surv.t))))}else{
+          
+          surv.t<-c(surv.t,rep(surv.data[i],(time.data[i]-time.data[i-1])))}
+  }
+  
+  surv.data<-data.frame(time=fit.time,surv.t=surv.t)
+  mu.hat<-exp(predict(model,newdata=newdata))
+  
+  for(i in 1:nrow(newdata)){
+    if(newdata$y.i[i]<=365){
+      surv1[i]<-1
+      surv2[i]<-surv.data$surv.t[surv.data$time==(newdata$y.i[i])]}else{
+        if(newdata$y.i[i]>length(surv.data$time)){
+          surv1[i]<-surv.data$surv.t[nrow(surv.data)]
+          surv2[i]<-surv.data$surv.t[nrow(surv.data)]}else{
+            surv1[i]<-surv.data$surv.t[surv.data$time==(newdata$y.i[i]-365)]
+            surv2[i]<-surv.data$surv.t[surv.data$time==(newdata$y.i[i])]}}
+    p[i]<-1-(surv2[i]/surv1[i])^mu.hat[i]
+  }
   return(p)
 }
 
-
-due.gam<-function(during.exp,live1,goods.m1,y.i,current.age,exp.prop,how.long.gam,p.left.date){ # 무만기 
-  library(nlme)
-  library(mgcv)
-  setwd("J://")
-  mu<-read.table("mu1.csv",header=T,sep="")
-  colnames(mu)<-c("Target_Y","age","how.exp","during.exp","how.pay","premium","live","con.date","due.date",
-                  "final.count","goods.m","goods.s","y.i","current.age","exp.prop","how.long","p.left.date","premium.once")
-  final.model11<-gam(Target_Y ~ s(during.exp) + live + goods.m + s(y.i) + s(current.age) + s(exp.prop) + 
-                       how.long + p.left.date,family=binomial(logit),data=mu)
-  mumu<-data.frame(during.exp=during.exp,live=live1,goods.m=goods.m1,y.i=y.i,current.age=current.age,
-                   exp.prop=exp.prop,how.long=how.long.gam,p.left.date=p.left.date)
-  mumup<-predict(final.model11,mumu,type = "response")
-  return(mumup)}
-
-cox.ftn<-function(y.i,age,how.long,exp.prop,p.left.date){
-  change.exp<-(exp.prop)^2
-  change.date<-sqrt(p.left.date)
-  beta2<-c(-0.0239438957,-0.43118438776,-9.9925334,9.5183863,0.1514444,
-           -11.9250271638)
-  x.data2<-c(age,how.long,change.exp,change.date,how.long*change.exp,
-            change.exp*change.date)
-  #length(beta2)
-  #length(x.data2)
-  mu.hat<-exp(sum(beta2*x.data2))
-  surv.p<-c(0.999999932560542,0.999999805076187,0.999999585095816,0.99999907810301,
-            0.999996347568668,0.999991939908845,0.999966791890089,
-            0.999956604819783,0.999933248247925,0.999906473101917,
-            0.999886111234325,0.999856773671286,0.999815442740395,
-            0.999776353481332,0.999726046372571,0.999704140634257,
-            0.999671279759543,0.99934316824031,0.998686979440193,
-            0.998150898712199,0.99738491097043,0.996534814181666,
-            0.995364833023809,0.994081425831923,0.993345859026553,
-            0.990802838609986,0.989796916665572,0.988461403261724,
-            0.987239260939469,0.978987423555786,0.952076136307492,
-            0.937470286631671,0.921328624540981,0.903085670232579,
-            0.872893335133969,0.850379491867935,0.827532497644607,
-            0.827532497644607,0.827532497644607,0.752219867849147,
-            0.752219867849147,0.752219867849147,0.752219867849147,
-            0.752219867849147,0.752219867849147,0.752219867849147,
-            0.752219867849147,0.107198466018926,0.0207983871066236,
-            0.000368370153037703,0.000368370153037703,
-            0.00000753958747645294,0.0000000000378079374762143)
-  time<-seq(1,length(surv.p))
-  surv.table<-data.frame(time=time,surv.p=surv.p)
-  if(y.i<=length(surv.p)){
-    surv.value1<-surv.table$surv.p[time==y.i]
-    surv.value2<-surv.table$surv.p[time==(y.i-3)]
-  }else if(length(surv.p)<=y.i & y.i<(length(surv.p)+3)){
-    surv.value1<-0
-    surv.value2<-1
-  }else{
-    surv.value1<-1
-    surv.value2<-1
-  }
-  p.value2<-1-(surv.value1/surv.value2)^mu.hat
-  return(p.value2)
+cox.ftn<-function(sol.data2,s10,a7,l3,s3,x78,a4,d1,p5,a2,s6,a3,s11,a1,p6,x42,p2,x72,x43,l1,x40){
+  
+  sol.data2$y<-sol.data2$y+sol.data2$x40
+  library("survival")
+  
+  my.surv<-Surv(sol.data2$y,sol.data2$delta)
+  
+  cox.fit<-coxph(formula = my.surv ~ s10 + a7 + sqrt(l3) + s3 + sqrt(x78) + a4 + 
+                   d1 + p5 + a2 + s6 + a3 + sqrt(s11) + a1 + p6 + as.factor(x42) + p2 + x72 + 
+                   x43 + l1+sqrt(l3):s6 +s3:l1 , data = sol.data2, method = "breslow")
+  new.data<-data.frame(s10=s10,a7=a7,l3=l3,s3=s3,x78=x78,a4=a4,
+                       d1=d1,p5=p5,a2=a2,s6=s6,a3=a3,s11=s11,a1=a1,
+                       p6=p6,x42=as.factor(x42),p2=p2,x72=x72,x43=x43,l1=l1,s3=s3)
+  new.data$y.i<-x40
+  cox.pred<-p.fun(cox.fit,newdata=new.data)
+  return(cox.pred)
 }
 
-
-myp.value<-function(p.method,age,how.exp,during.exp,live,con.date,final.count,goods.m,due,premium){
-  if(how.exp=="월납"){how.exp1<-1
-  }else if(how.exp=="3월납"){how.exp1<-2
-  }else if(how.exp=="6월납"){how.exp1<-3
-  }else if(how.exp=="년납"){how.exp1<-4}
-  if(live=="Yes"){
-    live1<-1
-  }else{live1<-0}
-  if(goods.m=="A"){
-    goods.m1<-1
-  }else if(goods.m=="B"){
-    goods.m1<-2
-  }else if(goods.m=="C"){
-    goods.m1<-3
-  }else if(goods.m=="D"){
-    goods.m1<-4
-  }else if(goods.m=="E"){
-    goods.m1<-5
-  }else if(goods.m=="F"){
-    goods.m1<-6
-  }
-  premium.once<-premium*ifelse(how.exp1==1,1,0)+premium*ifelse(how.exp1==2,1,0)/3+
-                premium*ifelse(how.exp1==3,1,0)/6+premium*ifelse(how.exp1==4,1,0)/12
-  y.i<-ifelse(how.exp1==1,1,0)*final.count+ifelse(how.exp1==2,1,0)*final.count*3+
-                 ifelse(how.exp1==3,1,0)*final.count*6+ifelse(how.exp1==4,1,0)*final.count*12
-    current.age<-(2001-as.numeric(substr(con.date,1,4)))+age
-   how.long.gam<-(2001-as.numeric(substr(con.date,1,4))+1)
-   how.long.cox<-(2001-as.numeric(substr(con.date,1,4))+1)*12
-   p.left.date<-y.i/(during.exp*12)
-   
-   today<-as.Date("2001-07-01", format="%Y-%m-%d")	
-   
-     aa<-as.numeric((today-as.Date(con.date, format="%Y-%m-%d"))/365*12)		
-     x9.g<- ifelse(how.exp1==1,ceiling(aa),0)+ifelse(how.exp1==2,ceiling(aa/3),0)+
-            ifelse(how.exp1==3,ceiling(aa/6),0)+ifelse(how.exp1==4,ceiling(aa/12),0)	
-     x9.t<- ifelse(how.exp1==1,ceiling(during.exp*12),0)+ifelse(how.exp1==2,ceiling(during.exp*4),0)+
-             ifelse(how.exp1==3,ceiling(during.exp*2),0)+ifelse(how.exp1==4,during.exp,0)	
-     exp.prop<-ifelse((aa/12)>during.exp,(final.count/x9.t),(final.count/x9.g))		
-     
-     if(p.method==1){
-       if(due==TRUE){
-         pp.value<-due.glm.ftn(during.exp,goods.m1,y.i,current.age,exp.prop,how.long.gam,p.left.date)
-       }else{
-       pp.value<-no.due.glm.ftn(live1,y.i,current.age,exp.prop,how.long.gam)}
-     }else if(p.method==2){
-       if(due==TRUE){
-         pp.value<-not.due.gam(y.i,current.age,exp.prop,how.long.gam,premium.once)
-       }else{
-         
-        pp.value<-due.gam(during.exp,live1,goods.m1,y.i,current.age,exp.prop,how.long.gam,p.left.date)
-       }
-        
-     }else if(p.method==3){
-        pp.value<-cox.ftn(y.i,age,how.long.cox,exp.prop,p.left.date)
-     }
-     return(pp.value)
+myp.value<-function(x1,g1,g2,p1,p2,p3,p4,p5,p6,p7,p8,p9,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,
+                    d1,d2,d3,d4,l1,l2,l3,a1,a2,a3,a4,a5,a6,a7,a8,x40,x41,x42,x43,x44){
+  
+  setwd("D:\\")
+  sol.data2<-read.csv("train2.csv",header=T)
+  
+  sol.data2$x45<-exp(sol.data2$x43) #매출액
+  sol.data2$x46<-exp(sol.data2$x44) #총자산
+  sol.data2$x47<-(sol.data2$x45/sol.data2$a8)*100 #총자본
+  sol.data2$x48<-(sol.data2$s10*sol.data2$x47)/100 #차입금**
+  sol.data2$x49<-(sol.data2$s9*sol.data2$x46)/100 #자기자본**
+  sol.data2$x50<-(sol.data2$s8*sol.data2$x46)/100 #유보액
+  sol.data2$x51<-(sol.data2$x45/sol.data2$a4)*100 #매출채권*
+  sol.data2$x52<-(sol.data2$x45/sol.data2$a3)*100 #매입채무***
+  sol.data2$x53<-(sol.data2$x45/sol.data2$a7)*100 #재고자산
+  sol.data2$x54<-(sol.data2$x45/sol.data2$a6)*100 #자본금(초기자본)
+  sol.data2$x55<-(sol.data2$s11*sol.data2$x48)/100 #고정자산
+  sol.data2$x56<-(sol.data2$x45/sol.data2$a1)*100 #경영자본
+  sol.data2$x57<-(sol.data2$s6*sol.data2$x49)/100 #유동부채**
+  sol.data2$x58<-(sol.data2$s7*sol.data2$x57)/100 #유동자산**
+  sol.data2$x59<-(sol.data2$s4*sol.data2$x46)/100 #총부채 
+  sol.data2$x59<-(sol.data2$s5*sol.data2$x46)/100 #순부채
+  sol.data2$x60<-(sol.data2$s1*sol.data2$x49)/100 #고정부채
+  sol.data2$x61<-(sol.data2$p7*sol.data2$x47)/100 #순이익
+  sol.data2$x62<-(sol.data2$p6*sol.data2$x47)/100 #경상이익
+  sol.data2$x63<-(sol.data2$p4*sol.data2$x49)/100 #당기순이익
+  sol.data2$x64<-(sol.data2$p2*sol.data2$x59)/100 #금융비용 -
+  sol.data2$x65<-(sol.data2$x64/sol.data2$p3)*100 #총비용 -
+  sol.data2$x66<-(sol.data2$d3*sol.data2$x48)/100 #총CF
+  sol.data2$x67<-(sol.data2$d4*sol.data2$x48)/100 #CF
+  sol.data2$x68<-(sol.data2$l3*sol.data2$x57)/100 #현금예금
+  sol.data2$x69<-((sol.data2$x68+sol.data2$x51)/sol.data2$x58)*100 #당좌비율###################-
+  sol.data2$x70<-(sol.data2$p8*sol.data2$x47)/100 #영업이익
+  sol.data2$x71<-(sol.data2$x70/sol.data2$x45)*100 #매출액영업이익률
+  sol.data2$x72<-(sol.data2$x62/sol.data2$x45)*100 #매출액경상이익률
+  sol.data2$x73<-(sol.data2$x45/(sol.data2$x58-sol.data2$x57))*100 #운전자산회전율-
+  sol.data2$x74<-((sol.data2$x58-sol.data2$x57)/sol.data2$x46)*100 #순운전자본비율
+  sol.data2$x75<-(sol.data2$x55/(sol.data2$x49+sol.data2$x60))*100 #고정장기적합률-
+  sol.data2$x76<-sol.data2$a2*sol.data2$x71 #고정자산영업이익률(효율성)
+  sol.data2$x77<-sol.data2$a2*sol.data2$x72 #고정자산경상이익률(효율성)
+  sol.data2$x78<-(sol.data2$x45/sol.data2$x46)*100 #총자산회전율
+  sol.data2$x79<-(sol.data2$x45/sol.data2$x64)*100 #금융비율부담률
+  sol.data2$y.i<-(sol.data2$y+sol.data2$x40)           #일단위로 time환산
+  
+  sol.data2$x41<-as.factor(sol.data2$x41)
+  sol.data2$x42<-as.factor(sol.data2$x42)
+  x41<-as.factor(x41)
+  x42<-as.factor(x42)
+  
+  x45<-exp(x43) #매출액
+  x46<-exp(x44) #총자산
+  x47<-(x45/a8)*100 #총자본
+  x48<-(s10*x47)/100 #차입금**
+  x49<-(s9*x46)/100 #자기자본**
+  x50<-(s8*x46)/100 #유보액
+  x51<-(x45/a4)*100 #매출채권*
+  x52<-(x45/a3)*100 #매입채무***
+  x53<-(x45/a7)*100 #재고자산
+  x54<-(x45/a6)*100 #자본금(초기자본)
+  x55<-(s11*x48)/100 #고정자산
+  x56<-(x45/a1)*100 #경영자본
+  x57<-(s6*x49)/100 #유동부채**
+  x58<-(s7*x57)/100 #유동자산**
+  x59<-(s4*x46)/100 #총부채 
+  x59<-(s5*x46)/100 #순부채
+  x60<-(s1*x49)/100 #고정부채
+  x61<-(p7*x47)/100 #순이익
+  x62<-(p6*x47)/100 #경상이익
+  x63<-(p4*x49)/100 #당기순이익
+  x64<-(p2*x59)/100 #금융비용 -
+  x65<-(x64/p3)*100 #총비용 -
+  x66<-(d3*x48)/100 #총CF
+  x67<-(d4*x48)/100 #CF
+  x68<-(l3*x57)/100 #현금예금
+  x69<-((x68+x51)/x58)*100 #당좌비율###################-
+  
+  x70<-(p8*x47)/100 #영업이익
+  x71<-(x70/x45)*100 #매출액영업이익률
+  x72<-(x62/x45)*100 #매출액경상이익률
+  x73<-(x45/(x58-x57))*100 #운전자산회전율-
+  x74<-((x58-x57)/x46)*100 #순운전자본비율
+  x75<-(x55/(x49+x60))*100 #고정장기적합률-
+  x76<-a2*x71 #고정자산영업이익률(효율성)
+  x77<-a2*x72 #고정자산경상이익률(효율성)
+  x78<-(x45/x46)*100 #총자산회전율
+  x79<-(x45/x64)*100 #금융비율부담률
+  p.glm<-glm.ftn(sol.data2,s2,s4,s9,s11,s12,d1,l1,l3,x1,g1,g2,p2,p4,p7,a1,a2,a3,x40,x43,x44,x41,x42,x49,x71,x74,x48,x51,x52)
+  p.cox<-cox.ftn(sol.data2,s10,a7,l3,s3,x78,a4,d1,p5,a2,s6,a3,s11,a1,p6,x42,p2,x72,x43,l1,x40)
+  p.gam<-gam.ftn(sol.data2,s1)
+  
+  print(list(p.glm=p.glm,p.gam=p.gam,p.cox=p.cox))
 }
 
+lift.plot.ftn<-function(test.data,p){
+  lift.plot.value<-c()
+  new.data<-cbind(test.data,p)
+  for(i in 1:10){
+    lift.data<-new.data[order(new.data$p,decreasing=T)[round(length(p)*0.1*(i-1)):round(length(p)*0.1*i)],]
+    lift.plot.value[i]<-mean(lift.data$delta)}
+  return(lift.plot.value)}
+pred.p7<-p.fun(cox.fit,sol.data2)
+a<-lift.plot.ftn(sol.data2,pred.p7)
+
+
+mytable<-function(x1,g1,g2,p1,p2,p3,p4,p5,p6,p7,p8,p9,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,d1,d2,d3,d4,l1,l2,l3,a1,a2,a3,a4,a5,a6,a7,a8,x40,x41,x42,x43,x44){
+  p.value<-myp.value(x1,g1,g2,p1,p2,p3,p4,p5,p6,p7,p8,p9,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,
+                     d1,d2,d3,d4,l1,l2,l3,a1,a2,a3,a4,a5,a6,a7,a8,x40,x41,x42,x43,x44)
+  
+  library(data.table)
+  dat <- rbind(data.table(Model="GLM",value=p.value[1]),
+               data.table(Model="GAM",value=p.value[2]),
+               data.table(Model="COX-PH",value=p.value[3])
+  )
+  return(dat)
+  
+}
 
 library(shiny)
 
 ui<-
 shinyUI(pageWithSidebar(
-    headerPanel("보험 해지 확률"),
+    headerPanel("기업 부도 예측"),
     sidebarPanel(  
-      
-      radioButtons(inputId="p.method",
-                  label="방법",
-                  choices=list("GLM"=1,"GAM"=2,"Cox PH"=3),
+      actionButton("View",label="확인"),
+      numericInput(inputId="x1",
+                   label="총자본투자효율",
+                   value=5),
+      numericInput(inputId="g1",
+                   label="매출채권증가율",
+                   value=146),
+      numericInput(inputId="g2",
+                   label="재고자산증가율",
+                   value=185),
+      numericInput(inputId="p1",
+                   label="경영자본순이익율",
+                   value=146),
+      numericInput(inputId="p2",
+                   label="금융비용/총부채비율",
+                   value=59),
+      numericInput(inputId="p3",
+                   label="금융비용/총비용비율",
+                   value=54),
+      numericInput(inputId="p4",
+                   label="자기자본순이익율",
+                   value=0.166),
+      numericInput(inputId="p5",
+                   label="자본금순이익율",
+                   value=3.95),
+      numericInput(inputId="p6",
+                   label="총자본경상이익율",
+                   value=1.72),
+      numericInput(inputId="p7",
+                   label="총자본순이익률",
+                   value=1.72),
+      numericInput(inputId="p8",
+                   label="총자본영업이익률",
+                   value=3.63999),
+      numericInput(inputId="p9",
+                   label="총자산사업이익률",
+                   value=3.63333),
+      numericInput(inputId="s1",
+                   label="고정부채비율",
+                   value=146),
+      numericInput(inputId="s2",
+                   label="고정비율",
+                   value=185),
+      numericInput(inputId="s3",
+                   label="부채비율",
+                   value=146),
+      numericInput(inputId="s4",
+                   label="부채총계/자산총계비율",
+                   value=59.4429),
+      numericInput(inputId="s5",
+                   label="순부채/총자산비율",
+                   value=54),
+      numericInput(inputId="s6",
+                   label="유동부채비율",
+                   value=0.166),
+      numericInput(inputId="s7",
+                   label="유동비율",
+                   value=36437),
+      numericInput(inputId="s8",
+                   label="유보액/총자산비율",
+                   value=0.66816),
+      numericInput(inputId="s9",
+                   label="자기자본비율",
+                   value=40.5570),
+      numericInput(inputId="s10",
+                   label="차입금의존도",
+                   value=59),
+      numericInput(inputId="s11",
+                   label="고정자산/차입금비율",
+                   value=127),
+      numericInput(inputId="s12",
+                   label="차입금/자기자본비율",
+                   value=146),
+      numericInput(inputId="d1",
+                   label="고정재무비보상배율",
+                   value=1.605638),
+      numericInput(inputId="d2",
+                   label="총차입금/(총차입금+자기자본)비율",
+                   value=59),
+      numericInput(inputId="d3",
+                   label="총CF/차입금비율",
+                   value=4),
+      numericInput(inputId="d4",
+                   label="CF/차입금비율",
+                   value=-21.18973),
+      numericInput(inputId="l1",
+                   label="순운전자본/총자본비율",
+                   value=24),
+      numericInput(inputId="l2",
+                   label="유동부채구성비율",
+                   value=0.06),
+      numericInput(inputId="l3",
+                   label="현금비율",
+                   value=8072),
+      numericInput(inputId="a1",
+                   label="경영자본회전율",
+                   value=19.466004),
+      numericInput(inputId="a2",
+                   label="고정자산회전율",
+                   value=1.9),
+      numericInput(inputId="a3",
+                   label="매입채무회전율",
+                   value=-32),
+      numericInput(inputId="a4",
+                   label="매출채권회전율",
+                   value=1.72),
+      numericInput(inputId="a5",
+                   label="자기자본회전율",
+                   value=1.18),
+      numericInput(inputId="a6",
+                   label="자본금회전율",
+                   value=1.185),
+      numericInput(inputId="a7",
+                   label="재고자산회전율",
+                   value=16),
+      numericInput(inputId="a8",
+                   label="총자본회전율",
+                   value=0.515),
+      numericInput(inputId="x40",
+                   label="기업나이(2006년 1월 1일- 창업일)",
+                   value=4400),
+      selectInput(inputId="x41",
+                  label="업종",
+                  choices=list("경공업"=1,"중공업"=2,"건설업"=3,"도소매"=4,"서비스"=5),
                   selected=1),
-      numericInput(inputId="age",
-                   label="가입연령",
-                   value=44),
-      selectInput(inputId="how.exp",
-                  label="납입방법",
-                  choices=list("월납","3월납","6월납","년납"),
+      selectInput(inputId="x42",
+                  label="규모",
+                  choices=list("외감"=1,"비외감1"=2,"비외감2"=3,"소호"=4,"개인"=5),
                   selected=1),
-      numericInput(inputId="during.exp",
-                   label="납입기간/년",
-                   value=20),
-      checkboxGroupInput(inputId="live",
-                    label="부활여부",
-                    choices=list("Yes"=1,"No"=2),
-                    selected=2),
-      dateInput(inputId="con.date",
-                label="계약일자",
-                value="1990-02-08"),
-      numericInput(inputId="final.count",
-                   label="최종납입횟수",
-                   value=137),
-      numericInput(inputId="premium",
-                   label="보험료",
-                   value=30000),
-      selectInput(inputId="goods.m",
-                  label="상품중분류",
-                  choices=list("A","B","C","D","E","F"),
-                  selected=1),
-      checkboxInput(inputId="due",
-                    label="만기",
-                    value=TRUE),
-      actionButton("View",label="확인")
-      
-      ),
+      numericInput(inputId="x43",
+                   label="로그매출액",
+                   value=14),
+      numericInput(inputId="x44",
+                   label="로그자산",
+                   value=14)
+    ),
     mainPanel(
       h3(textOutput("caption")),
-      verbatimTextOutput("p.value"))
+      tableOutput('table'))
   ))
   
  server<-
  shinyServer(function(input,output){
-    
     output$caption<-renderText({
-      "생명보험 해지확률"
+      "기업부도확률"
     })
-    output$p.value<-renderText({
-      myp.value(input$p.method,input$age,input$how.exp,input$during.exp,input$live,input$con.date,
-                input$final.count,input$goods.m,input$due,input$premium)
-    })
+    output$table <- renderTable({mytable(input$x1,input$g1,input$g2,input$p1,input$p2,input$p3,input$p4,input$p5,input$p6,
+                                         input$p7,input$p8,input$p9,input$s1,input$s2,input$s3,input$s4,input$s5,input$s6,
+                                         input$s7,input$s8,input$s9,input$s10,input$s11,input$s12,
+                                         input$d1,input$d2,input$d3,input$d4,input$l1,input$l2,input$l3,input$a1,input$a2,
+                                         input$a3,input$a4,input$a5,input$a6,input$a7,input$a8,input$x40,input$x41,input$x42,input$x43,input$x44)})
+    
   })
 
 shinyApp(ui,server)
