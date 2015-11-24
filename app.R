@@ -70,7 +70,7 @@ cox.ftn<-function(sol.data2,s10,a7,l3,s3,x78,a4,d1,p5,a2,s6,a3,s11,a1,p6,x42,p2,
                        d1=d1,p5=p5,a2=a2,s6=s6,a3=a3,s11=s11,a1=a1,
                        p6=p6,x42=as.factor(x42),p2=p2,x72=x72,x43=x43,l1=l1,s3=s3)
   new.data$y.i<-x40
-  cox.pred<-exp(predict(cox.fit,newdata=new.data))
+  cox.pred<-p.fun(cox.fit,newdata=new.data)
   return(cox.pred)
 }
 
