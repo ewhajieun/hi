@@ -6,7 +6,7 @@ glm.ftn<-function(sol.data,s2,s4,s9,s11,s12,d1,l1,l3,x1,g1,g2,p2,p4,p7,a1,a2,a3,
   new.data<-data.frame(s2=s2,s4=s4,s9=s9,s11=s11,s12=s12,d1=d1,l1=l1,l3=l3,
                        x1=x1,g1=g1,g2=g2,p2=p2,p4=p4,p7=p7,a1=a1,a2=a2,a3=a3,x40=x40,x43=x43,x44=x44,x41=as.factor(x41),
                        x42=as.factor(x42),x49=x49,x71=x71,x74=x74,x48=x48,x51=x51,x52=x52)
-  glm.pred<-1/(1+exp(-predict(glm.fit,newdata=new.data)))
+  glm.pred<-1/(1+exp(-predict(glm.fit,newdata=new.data,type="response")))
   return(glm.pred)}
 
 gam.ftn<-function(sol.data2,a5,s4,s6,s8,s9,s10,s11,d1,l3,x1,g1,p2,p3,p4,p7,p9,a1,a2,a3,a7,x40,x43,x70,x71,x74,x78){
