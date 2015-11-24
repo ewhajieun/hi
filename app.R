@@ -9,15 +9,12 @@ glm.ftn<-function(sol.data,s2,s4,s9,s11,s12,d1,l1,l3,x1,g1,g2,p2,p4,p7,a1,a2,a3,
   glm.pred<-1/(1+exp(-predict(glm.fit,newdata=new.data)))
   return(glm.pred)}
 
-gam.ftn<-function(sol.data2,a){
+gam.ftn<-function(sol.data2,a5,s4,s6,s8,s9,s10,s11,d1,l3,x1,g1,p2,p3,p4,p7,p9,a1,a2,a3,a7,x40,x43,x70,x71,x74,x78){
   library(nlme)
   library(mgcv)
   
-  gam.ftn<-gam(delta~s2+s4+s9+sqrt(s11)+sqrt(s12)+d1+l1+l3+x1+g1+g2+sqrt(p2)+p4+p7+log(a1)+sqrt(a2)+a3+log(x40)+x43+log(x44)+
-                 as.factor(x41)+as.factor(x42)+x49+x71+x74+x48+x51+x52, family=binomial("logit"),data=sol.data2)
-  new.data<-data.frame(s2=s2,s4=s4,s9=s9,s11=s11,s12=s12,d1=d1,l1=l1,l3=l3,
-                       x1=x1,g1=g1,g2=g2,p2=p2,p4=p4,p7=p7,a1=a1,a2=a2,a3=a3,x40=x40,x43=x43,x44=x44,x41=as.factor(x41),
-                       x42=as.factor(x42),x49=x49,x71=x71,x74=x74,x48=x48,x51=x51,x52=x52)
+  gam.ftn<-gam(delta~a5+s4+s6+s(s8)+s9+s10+s11+d1+l3+s(x1)+g1+s(p2)+p3+p4+p7+p9+a1+a2+s(a3)+a7+x40+x43+s(x70)+s(x71)+s(x74)+x78, family=binomial("logit"),data=sol.data2)
+  new.data<-data.frame(a5=a5,s4=s4,s6=s6,s8=s8,s9=s9,s10=s10,s11=s11,d1=d1,l3=l3,x1=x1,g1=g1,p2=p2,p3=p3,p4=p4,p7=p7,p9=p9,a1=a1,a2=a2,a3=a3,a7=a7,x40=x40,x43=x43,x70=x70,x71=x71,x74=x74,x78=x78)
   gam.pred<-predict(gam.ftn,newdata=new.data,type = "response")
   return(gam.pred)}
 
@@ -76,7 +73,51 @@ cox.ftn<-function(sol.data2,s10,a7,l3,s3,x78,a4,d1,p5,a2,s6,a3,s11,a1,p6,x42,p2,
   cox.pred<-p.fun(cox.fit,newdata=new.data)
   return(cox.pred)
 }
+x1<-1
+g1<-1
+g2<-1
+p1<-1
+p2<-1
+p3<-1
+p4<-1
+p5<-1
+p6<-1
+p7<-1
+p8<-1
+p9<-1
+s1<-1
+s2<-1
+s3<-1
+s4<-1
+s5<-1
+s6<-1
+s7<-1
+s8<-1
+s9<-1
+s10<-1
+s11<-1
 
+s12<-1
+d1<-1
+d2<-1
+d3<-1
+d4<-1
+l1<-1
+l2<-1
+l3<-1
+a1<-1
+a2<-1
+a3<-1
+a4<-1
+a5<-1
+a6<-1
+a7<-1
+a8<-1
+x40<-1
+x41<-1
+x42<-1
+x43<-1
+x44<-1
 myp.value<-function(x1,g1,g2,p1,p2,p3,p4,p5,p6,p7,p8,p9,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,
                     d1,d2,d3,d4,l1,l2,l3,a1,a2,a3,a4,a5,a6,a7,a8,x40,x41,x42,x43,x44){
   
@@ -165,10 +206,11 @@ myp.value<-function(x1,g1,g2,p1,p2,p3,p4,p5,p6,p7,p8,p9,s1,s2,s3,s4,s5,s6,s7,s8,
   x79<-(x45/x64)*100 #금융비율부담률
   p.glm<-glm.ftn(sol.data2,s2,s4,s9,s11,s12,d1,l1,l3,x1,g1,g2,p2,p4,p7,a1,a2,a3,x40,x43,x44,x41,x42,x49,x71,x74,x48,x51,x52)
   p.cox<-cox.ftn(sol.data2,s10,a7,l3,s3,x78,a4,d1,p5,a2,s6,a3,s11,a1,p6,x42,p2,x72,x43,l1,x40)
-  p.gam<-gam.ftn(sol.data2,s1)
+  p.gam<-gam.ftn(sol.data2,a5,s4,s6,s8,s9,s10,s11,d1,l3,x1,g1,p2,p3,p4,p7,p9,a1,a2,a3,a7,x40,x43,x70,x71,x74,x78)
   
   print(list(p.glm=p.glm,p.gam=p.gam,p.cox=p.cox))
 }
+library(shiny)
 
 lift.plot.ftn<-function(test.data,p){
   lift.plot.value<-c()
