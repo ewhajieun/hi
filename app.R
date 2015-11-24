@@ -195,7 +195,7 @@ ui<-
 shinyUI(pageWithSidebar(
     headerPanel("기업 부도 예측"),
     sidebarPanel(  
-      actionButton("View",label="확인"),
+      
       numericInput(inputId="x1",
                    label="총자본투자효율",
                    value=5),
