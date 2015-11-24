@@ -77,7 +77,7 @@ cox.ftn<-function(sol.data2,s10,a7,l3,s3,x78,a4,d1,p5,a2,s6,a3,s11,a1,p6,x42,p2,
 myp.value<-function(x1,g1,g2,p1,p2,p3,p4,p5,p6,p7,p8,p9,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,
                     d1,d2,d3,d4,l1,l2,l3,a1,a2,a3,a4,a5,a6,a7,a8,x40,x41,x42,x43,x44){
   
-  setwd("D:\\")
+  setwd("K:\\")
   sol.data2<-read.csv("train2.csv",header=T)
   
   sol.data2$x45<-exp(sol.data2$x43) #매출액
