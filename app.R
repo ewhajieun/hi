@@ -175,9 +175,6 @@ lift.plot.ftn<-function(test.data,p){
     lift.data<-new.data[order(new.data$p,decreasing=T)[round(length(p)*0.1*(i-1)):round(length(p)*0.1*i)],]
     lift.plot.value[i]<-mean(lift.data$delta)}
   return(lift.plot.value)}
-pred.p7<-p.fun(cox.fit,sol.data2)
-a<-lift.plot.ftn(sol.data2,pred.p7)
-
 
 mytable<-function(x1,g1,g2,p1,p2,p3,p4,p5,p6,p7,p8,p9,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,d1,d2,d3,d4,l1,l2,l3,a1,a2,a3,a4,a5,a6,a7,a8,x40,x41,x42,x43,x44){
   p.value<-myp.value(x1,g1,g2,p1,p2,p3,p4,p5,p6,p7,p8,p9,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,
