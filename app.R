@@ -83,7 +83,7 @@ final.data$sex<-as.factor(final.data$sex)
   									,data=final.data,method = "breslow")
   
   new.data<-data.frame(sbp=(sbp-mean(final.data$sbp)),dbp=(dbp-mean(final.data$dbp)),
-                       scl=(scl-mean(final.data$scl)),age=(age-mean(final.data$age)),bmi=(bmi-mean(final.data$bmi)),month=month,sex=as.factor(sex),
+                       scl=(scl-mean(final.data$scl)),age=as.numeric(age-mean(final.data$age)),bmi=(bmi-mean(final.data$bmi)),month=month,sex=as.factor(sex),
                        sq.dbp=(dbp^2-mean(sq.dbp)),log.bmi=(log(bmi)-mean(log.bmi)),sq.sbp=sbp^2-mean(sq.sbp),sq.scl=scl^2-mean(sq.scl))
 
  new.data2<-c(new.data$sbp,new.data$sq.sbp,new.data$dbp,
