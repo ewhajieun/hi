@@ -1,6 +1,6 @@
 
 alt.ftn<-function(final.data,sbp,dbp,age,scl,bmi,sex,month){
-
+final.data$sex<-as.factor(final.data$sex)
  my.surv<-Surv(final.data$followup,final.data$chdfate)
  alt.fit<-survreg(my.surv~sbp+dbp+scl+age+sqrt(bmi)+month+sex+sbp*scl+sbp*age+dbp*scl+dbp*age+age*sqrt(bmi)+age*sex,data=final.data,dist="weibull")
   new.data<-c(1,sbp,dbp,scl,age,sqrt(bmi),month,sex,sbp*scl,sbp*age,dbp*scl,dbp*age,age*sqrt(bmi),age*as.numeric(sex))
@@ -12,6 +12,7 @@ alt.ftn<-function(final.data,sbp,dbp,age,scl,bmi,sex,month){
 
 
 alt.ftn2<-function(final.data,sbp,dbp,age,scl,bmi,sex,month){
+final.data$sex<-as.factor(final.data$sex)
   my.surv2<-Surv(final.data$followup+age*365.25,final.data$chdfate)
   alt.fit<-survreg(my.surv2 ~ sbp + scl + age + bmi + sex + scl:age + scl:bmi + scl:sex + age:bmi, data = final.data, dist = "lognormal")
   new.data<-c(1,sbp,scl,age,bmi,sex,scl*age,scl*bmi,scl*as.numeric(sex),age*bmi)
@@ -36,7 +37,7 @@ surv.prob<-function(model,time){
 }
 
 cox.ftn<-function(final.data,sbp,dbp,age,scl,bmi,sex,month){
-
+final.data$sex<-as.factor(final.data$sex)
   sq.dbp<-final.data$dbp^2
   log.bmi<-log(final.data$bmi)
   cox.fit<-coxph(Surv(followup,chdfate==0)~sbp+dbp+sq.dbp+scl+age+log.bmi+month+
@@ -60,6 +61,7 @@ cox.ftn<-function(final.data,sbp,dbp,age,scl,bmi,sex,month){
   }
 
 cox.ftn2<-function(final.data,sbp,dbp,age,scl,bmi,sex,month){
+final.data$sex<-as.factor(final.data$sex)
   sq.sbp<-final.data$sbp^2
   sq.dbp<-final.data$dbp^2
   sq.scl<-final.data$scl^2
