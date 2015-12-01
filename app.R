@@ -111,10 +111,9 @@ myp.value<-function(model,sbp,dbp,age,scl,height,weight,sex,month){
  model<-as.numeric(model)
   if(model==1){
 
-  alt.p<-alt.ftn(final.data,sbp,dbp,age,scl,bmi,sex,month)
-  cox.p<-cox.ftn(final.data,sbp,dbp,age,scl,bmi,sex,month)}else{
+ 
   alt.p<-alt.ftn2(final.data,sbp,dbp,age,scl,bmi,sex,month)
-  cox.p<-cox.ftn2(final.data,sbp,dbp,age,scl,bmi,sex,month)}
+  cox.p<-cox.ftn2(final.data,sbp,dbp,age,scl,bmi,sex,month)
 
   print(list(alt.p=alt.p,cox.p=cox.p))
 }
@@ -137,10 +136,7 @@ shinyUI(pageWithSidebar(
     headerPanel("심장병 발생 확률"),
     sidebarPanel(  
 
-      radioButtons(inputId="model",
-                   label="Model",
-                   choices=list("followup"=1,"followup+age"=2),
-                   selected=2),
+   
 
       numericInput(inputId="sbp",
                    label="SBP(systolic blood pressure)",
