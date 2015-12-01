@@ -152,7 +152,7 @@ shinyUI(pageWithSidebar(
                    label="age",
                    max=100,
                    min=0,
-                   value=24),
+                   value=60),
       numericInput(inputId="scl",
                    label="SCL(serum cholesterol)",
                    value=239),
