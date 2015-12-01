@@ -87,6 +87,7 @@ cox.ftn2<-function(final.data,sbp,dbp,age,scl,bmi,sex,month){
 myp.value<-function(model,sbp,dbp,age,scl,height,weight,sex,month){
   bmi<-weight/(height^2)
   month<-as.numeric(month)
+  age<-as.numeric(age)
   sex<-as.factor(sex)
   library(survival)
   setwd("C:\\Users\\PC\\Desktop")
@@ -124,7 +125,7 @@ shinyUI(pageWithSidebar(
       radioButtons(inputId="model",
                    label="Model",
                    choices=list("followup"=1,"followup+age"=2),
-                   selected=1),
+                   selected=2),
 
       numericInput(inputId="sbp",
                    label="SBP(systolic blood pressure)",
