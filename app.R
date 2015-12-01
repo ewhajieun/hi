@@ -93,7 +93,7 @@ final.data$sex<-as.factor(final.data$sex)
             new.data$dbp*new.data$log.bmi,new.data$sq.dbp*new.data$sq.scl,new.data$sq.dbp*new.data$log.bmi,
             new.data$scl*new.data$sq.scl,new.data$scl*as.numeric(new.data$sex),new.data$sq.scl*as.numeric(new.data$sex))
 
-  cox.p<-1-(surv.prob(cox.fit,(3650+age*365.25))/surv.prob(cox.fit,(age*365.25)))^exp(sum(as.numeric(cox.fit$coef)*new.data2))
+  cox.p<-1-(surv.prob(cox.fit,(3650+new.data$age*365.25))/surv.prob(cox.fit,(new.data$age*365.25)))^exp(sum(as.numeric(cox.fit$coef)*new.data2))
   return(cox.p)
   }
 
