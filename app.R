@@ -97,7 +97,7 @@ final.data$sex<-as.factor(final.data$sex)
   return(cox.p)
   }
 
-myp.value<-function(model,sbp,dbp,age,scl,height,weight,sex,month){
+myp.value<-function(sbp,dbp,age,scl,height,weight,sex,month){
   bmi<-weight/(height^2)
   month<-as.numeric(month)
   age<-as.numeric(age)
@@ -119,9 +119,9 @@ myp.value<-function(model,sbp,dbp,age,scl,height,weight,sex,month){
 }
 #height<-170
 #weight<-56
-mytable<-function(model,sbp,dbp,age,scl,height,weight,sex,month){
+mytable<-function(sbp,dbp,age,scl,height,weight,sex,month){
   library(data.table)
-  p.value<-myp.value(model,sbp,dbp,age,scl,height,weight,sex,month)
+  p.value<-myp.value(sbp,dbp,age,scl,height,weight,sex,month)
   dat <- rbind(data.table(Model="ALT",value=p.value$alt.p),
                data.table(Model="COX-PH",value=p.value$cox.p))
   return(dat)
@@ -179,7 +179,7 @@ shinyUI(pageWithSidebar(
     output$caption<-renderText({
       "10년내 심장병발생 확률"
     })
-    output$table <- renderTable({mytable(input$model,input$sbp,input$dbp,input$age,input$scl,input$height,input$weight,
+    output$table <- renderTable({mytable(input$sbp,input$dbp,input$age,input$scl,input$height,input$weight,
                                          input$sex,input$month)})
     
   })
