@@ -1,15 +1,4 @@
 
-setwd("C:\\Users\\PC\\Desktop")
-final.data<-read.csv("final.csv",header=T)
-
-#############################################################################
-#sbp<-106
-#dbp<-68
-#age<-60
-#scl<-239
-#bmi<-22.9
-#sex<-1
-#month<-1
 
 alt.ftn<-function(final.data,sbp,dbp,age,scl,bmi,sex,month){
 final.data$sex<-as.factor(final.data$sex)
@@ -140,7 +129,7 @@ shinyUI(pageWithSidebar(
       radioButtons(inputId="model",
                    label="Model",
                    choices=list("followup"=1,"followup+age"=2),
-                   selected=2),
+                   selected=1),
 
       numericInput(inputId="sbp",
                    label="SBP(systolic blood pressure)",
