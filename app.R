@@ -1,6 +1,18 @@
 
-alt.ftn<-function(final.data,sbp,dbp,age,scl,bmi,sex,month){
+setwd("C:\\Users\\PC\\Desktop")
+final.data<-read.csv("final.csv",header=T)
 
+#############################################################################
+#sbp<-106
+#dbp<-68
+#age<-60
+#scl<-239
+#bmi<-22.9
+#sex<-1
+#month<-1
+
+alt.ftn<-function(final.data,sbp,dbp,age,scl,bmi,sex,month){
+final.data$sex<-as.factor(final.data$sex)
  my.surv<-Surv(final.data$followup,final.data$chdfate)
  alt.fit<-survreg(my.surv~sbp+dbp+scl+age+sqrt(bmi)+month+sex+sbp*scl+sbp*age+dbp*scl+dbp*age+age*sqrt(bmi)+age*sex,data=final.data,dist="weibull")
   new.data<-c(1,sbp,dbp,scl,age,sqrt(bmi),month,sex,sbp*scl,sbp*age,dbp*scl,dbp*age,age*sqrt(bmi),age*as.numeric(sex))
@@ -12,6 +24,7 @@ alt.ftn<-function(final.data,sbp,dbp,age,scl,bmi,sex,month){
 
 
 alt.ftn2<-function(final.data,sbp,dbp,age,scl,bmi,sex,month){
+final.data$sex<-as.factor(final.data$sex)
   my.surv2<-Surv(final.data$followup+age*365.25,final.data$chdfate)
   alt.fit<-survreg(my.surv2 ~ sbp + scl + age + bmi + sex + scl:age + scl:bmi + scl:sex + age:bmi, data = final.data, dist = "lognormal")
   new.data<-c(1,sbp,scl,age,bmi,sex,scl*age,scl*bmi,scl*as.numeric(sex),age*bmi)
@@ -34,10 +47,9 @@ surv.prob<-function(model,time){
   }}
   return(surv.prob)
 }
-survfit(cox.fit)$surv
-surv.prob(cox.ftn,3650)
-cox.ftn<-function(final.data,sbp,dbp,age,scl,bmi,sex,month){
 
+cox.ftn<-function(final.data,sbp,dbp,age,scl,bmi,sex,month){
+final.data$sex<-as.factor(final.data$sex)
   sq.dbp<-final.data$dbp^2
   log.bmi<-log(final.data$bmi)
   cox.fit<-coxph(Surv(followup,chdfate==0)~sbp+dbp+sq.dbp+scl+age+log.bmi+month+
@@ -45,16 +57,12 @@ cox.ftn<-function(final.data,sbp,dbp,age,scl,bmi,sex,month){
                                              sq.dbp:age+age:log.bmi+age:sex
                                             ,data=final.data,method = "breslow")
 
-  new.data<-c((sbp-mean(final.data$sbp)),(dbp-mean(final.data$dbp)),
-                       (scl-mean(final.data$scl)),(age-mean(final.data$age)),(bmi-mean(final.data$bmi)),month,sex)
+  
   new.data<-data.frame(sbp=(sbp-mean(final.data$sbp)),dbp=(dbp-mean(final.data$dbp)),
-                       scl=(scl-mean(final.data$scl)),age=(age-mean(final.data$age)),bmi=(bmi-mean(final.data$bmi)),month=month,sex=sex,
+                       scl=(scl-mean(final.data$scl)),age=(age-mean(final.data$age)),bmi=(bmi-mean(final.data$bmi)),month=month,sex=as.factor(sex),
                        sq.dbp=(dbp^2-mean(sq.dbp)),log.bmi=(log(bmi)-mean(log.bmi)))
 
-  new.data<-data.frame(sbp=(sbp),dbp=(dbp),
-                       scl=(scl),age=(age),bmi=(bmi),month=month,sex=sex,
-                       sq.dbp=(dbp^2),log.bmi=(log(bmi)))
-
+ 
   new.data2<-c(new.data$sbp,new.data$dbp,new.data$sq.dbp,new.data$scl,new.data$age,new.data$log.bmi,new.data$month,
                                              new.data$sex,new.data$sbp*new.data$scl,new.data$sbp*new.data$month,new.data$dbp*new.data$age,new.data$sq.dbp*new.data$scl,
                                              new.data$sbp*new.data$age,
@@ -65,6 +73,7 @@ cox.ftn<-function(final.data,sbp,dbp,age,scl,bmi,sex,month){
   }
 
 cox.ftn2<-function(final.data,sbp,dbp,age,scl,bmi,sex,month){
+final.data$sex<-as.factor(final.data$sex)
   sq.sbp<-final.data$sbp^2
   sq.dbp<-final.data$dbp^2
   sq.scl<-final.data$scl^2
@@ -73,13 +82,9 @@ cox.ftn2<-function(final.data,sbp,dbp,age,scl,bmi,sex,month){
                                                          sbp:log.bmi+sq.sbp:sq.scl+sq.sbp:log.bmi+dbp:sq.scl+dbp:log.bmi+
                                                          sq.dbp:sq.scl+sq.dbp:log.bmi+scl:sq.scl+scl:sex+sq.scl:sex
   									,data=final.data,method = "breslow")
-  new.data<-c((sbp-mean(final.data$sbp)),(dbp-mean(final.data$dbp)),
-                       (scl-mean(final.data$scl)),(bmi-mean(final.data$bmi)),month,sex)
-  new.data<-data.frame(sbp=(sbp),dbp=(dbp),
-                       scl=(scl),age=(age),bmi=(bmi),month=month,sex=sex,
-                       sq.dbp=(dbp^2),log.bmi=(log(bmi)),sq.sbp=sbp^2,sq.scl=scl^2)
+  
   new.data<-data.frame(sbp=(sbp-mean(final.data$sbp)),dbp=(dbp-mean(final.data$dbp)),
-                       scl=(scl-mean(final.data$scl)),age=(age-mean(final.data$age)),bmi=(bmi-mean(final.data$bmi)),month=month,sex=sex,
+                       scl=(scl-mean(final.data$scl)),age=(age-mean(final.data$age)),bmi=(bmi-mean(final.data$bmi)),month=month,sex=as.factor(sex),
                        sq.dbp=(dbp^2-mean(sq.dbp)),log.bmi=(log(bmi)-mean(log.bmi)),sq.sbp=sbp^2-mean(sq.sbp),sq.scl=scl^2-mean(sq.scl))
 
  new.data2<-c(new.data$sbp,new.data$sq.sbp,new.data$dbp,
@@ -96,11 +101,13 @@ cox.ftn2<-function(final.data,sbp,dbp,age,scl,bmi,sex,month){
 myp.value<-function(model,sbp,dbp,age,scl,height,weight,sex,month){
   bmi<-weight/(height^2)
   month<-as.numeric(month)
+  age<-as.numeric(age)
   sex<-as.factor(sex)
   library(survival)
   setwd("C:\\Users\\PC\\Desktop")
   final.data<-read.csv("final.csv",header=T)
 #model<-2
+
  model<-as.numeric(model)
   if(model==1){
 
@@ -123,8 +130,10 @@ mytable<-function(model,sbp,dbp,age,scl,height,weight,sex,month){
 library(shiny)
 
 
+
+
 ui<-
- shinyUI(pageWithSidebar(
+shinyUI(pageWithSidebar(
     headerPanel("심장병 발생 확률"),
     sidebarPanel(  
 
