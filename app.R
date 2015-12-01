@@ -42,9 +42,9 @@ surv.prob<-function(model,time){
   data.surv<-data.frame(time=survfit(model)$time,surv=survfit(model)$surv)
   for(i in 1:nrow(data.surv)){
   if(data.surv$time[i]<=time & time<data.surv$time[i+1]){
-    surv.prob<-data.surv$surv[i]
+    a<-data.surv$surv[i]
   }}
-  return(surv.prob)
+  return(a)
 }
 
 cox.ftn<-function(final.data,sbp,dbp,age,scl,bmi,sex,month){
