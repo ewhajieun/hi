@@ -1,3 +1,14 @@
+setwd("C:\\Users\\PC\\Desktop")
+final.data<-read.csv("final.csv",header=T)
+
+#############################################################################
+#sbp<-106
+#dbp<-68
+#age<-60
+#scl<-239
+#bmi<-22.9
+#sex<-1
+#month<-1
 
 alt.ftn<-function(final.data,sbp,dbp,age,scl,bmi,sex,month){
 final.data$sex<-as.factor(final.data$sex)
@@ -47,7 +58,7 @@ final.data$sex<-as.factor(final.data$sex)
 
   
   new.data<-data.frame(sbp=(sbp-mean(final.data$sbp)),dbp=(dbp-mean(final.data$dbp)),
-                       scl=(scl-mean(final.data$scl)),age=as.factor(age-mean(final.data$age)),bmi=(bmi-mean(final.data$bmi)),month=month,sex=as.factor(sex),
+                       scl=(scl-mean(final.data$scl)),age=(age-mean(final.data$age)),bmi=(bmi-mean(final.data$bmi)),month=month,sex=as.factor(sex),
                        sq.dbp=(dbp^2-mean(sq.dbp)),log.bmi=(log(bmi)-mean(log.bmi)))
 
  
@@ -72,7 +83,7 @@ final.data$sex<-as.factor(final.data$sex)
   									,data=final.data,method = "breslow")
   
   new.data<-data.frame(sbp=(sbp-mean(final.data$sbp)),dbp=(dbp-mean(final.data$dbp)),
-                       scl=(scl-mean(final.data$scl)),age=as.factor(age-mean(final.data$age)),bmi=(bmi-mean(final.data$bmi)),month=month,sex=as.factor(sex),
+                       scl=(scl-mean(final.data$scl)),age=(age-mean(final.data$age)),bmi=(bmi-mean(final.data$bmi)),month=month,sex=as.factor(sex),
                        sq.dbp=(dbp^2-mean(sq.dbp)),log.bmi=(log(bmi)-mean(log.bmi)),sq.sbp=sbp^2-mean(sq.sbp),sq.scl=scl^2-mean(sq.scl))
 
  new.data2<-c(new.data$sbp,new.data$sq.sbp,new.data$dbp,
