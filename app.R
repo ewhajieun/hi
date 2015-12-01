@@ -135,17 +135,13 @@ ui<-
 shinyUI(pageWithSidebar(
     headerPanel("심장병 발생 확률"),
     sidebarPanel(  
-
-   
-
       numericInput(inputId="sbp",
                    label="SBP(systolic blood pressure)",
                    value=106),
       numericInput(inputId="dbp",
                    label="DBP(diastolic blood pressure)",
                    value=68),
-      
-      numericInput(inputId="age",
+            numericInput(inputId="age",
                    label="age",
                    value=60),
       sliderInput(inputId="height",
