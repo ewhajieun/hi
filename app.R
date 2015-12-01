@@ -34,8 +34,7 @@ surv.prob<-function(model,time){
   }}
   return(surv.prob)
 }
-survfit(cox.fit)$surv
-surv.prob(cox.ftn,3650)
+
 cox.ftn<-function(final.data,sbp,dbp,age,scl,bmi,sex,month){
 
   sq.dbp<-final.data$dbp^2
@@ -45,16 +44,12 @@ cox.ftn<-function(final.data,sbp,dbp,age,scl,bmi,sex,month){
                                              sq.dbp:age+age:log.bmi+age:sex
                                             ,data=final.data,method = "breslow")
 
-  new.data<-c((sbp-mean(final.data$sbp)),(dbp-mean(final.data$dbp)),
-                       (scl-mean(final.data$scl)),(age-mean(final.data$age)),(bmi-mean(final.data$bmi)),month,sex)
+  
   new.data<-data.frame(sbp=(sbp-mean(final.data$sbp)),dbp=(dbp-mean(final.data$dbp)),
                        scl=(scl-mean(final.data$scl)),age=(age-mean(final.data$age)),bmi=(bmi-mean(final.data$bmi)),month=month,sex=sex,
                        sq.dbp=(dbp^2-mean(sq.dbp)),log.bmi=(log(bmi)-mean(log.bmi)))
 
-  new.data<-data.frame(sbp=(sbp),dbp=(dbp),
-                       scl=(scl),age=(age),bmi=(bmi),month=month,sex=sex,
-                       sq.dbp=(dbp^2),log.bmi=(log(bmi)))
-
+ 
   new.data2<-c(new.data$sbp,new.data$dbp,new.data$sq.dbp,new.data$scl,new.data$age,new.data$log.bmi,new.data$month,
                                              new.data$sex,new.data$sbp*new.data$scl,new.data$sbp*new.data$month,new.data$dbp*new.data$age,new.data$sq.dbp*new.data$scl,
                                              new.data$sbp*new.data$age,
@@ -73,11 +68,7 @@ cox.ftn2<-function(final.data,sbp,dbp,age,scl,bmi,sex,month){
                                                          sbp:log.bmi+sq.sbp:sq.scl+sq.sbp:log.bmi+dbp:sq.scl+dbp:log.bmi+
                                                          sq.dbp:sq.scl+sq.dbp:log.bmi+scl:sq.scl+scl:sex+sq.scl:sex
   									,data=final.data,method = "breslow")
-  new.data<-c((sbp-mean(final.data$sbp)),(dbp-mean(final.data$dbp)),
-                       (scl-mean(final.data$scl)),(bmi-mean(final.data$bmi)),month,sex)
-  new.data<-data.frame(sbp=(sbp),dbp=(dbp),
-                       scl=(scl),age=(age),bmi=(bmi),month=month,sex=sex,
-                       sq.dbp=(dbp^2),log.bmi=(log(bmi)),sq.sbp=sbp^2,sq.scl=scl^2)
+  
   new.data<-data.frame(sbp=(sbp-mean(final.data$sbp)),dbp=(dbp-mean(final.data$dbp)),
                        scl=(scl-mean(final.data$scl)),age=(age-mean(final.data$age)),bmi=(bmi-mean(final.data$bmi)),month=month,sex=sex,
                        sq.dbp=(dbp^2-mean(sq.dbp)),log.bmi=(log(bmi)-mean(log.bmi)),sq.sbp=sbp^2-mean(sq.sbp),sq.scl=scl^2-mean(sq.scl))
